@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+
+	"github.com/skordas/ci-watcher-scheduler/tools/debug"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -12,8 +15,17 @@ import (
 )
 
 func main() {
+	// Get Environment Variables
+	credentialsJson := os.Getenv("CREDENTIALS")
+	spreadsheetId := os.Getenv("SPREADSHEET_ID")
+	readRange := os.Getenv("ENGINEERS_SHEET")
+	debug.Log("info", "First info")
+	debug.Log("error", "Here some error")
+	debug.Log("warning", "some warning")
+	debug.Log("debug", "Here is some dubugging")
+
 	ctx := context.Background()
-	b, err := ioutil.ReadFile("service_account_credentials.json")
+	b, err := ioutil.ReadFile(credentialsJson)
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
@@ -30,8 +42,6 @@ func main() {
 	}
 
 	//Some first test if it's working
-	spreadsheetId := "spreadsheetID_placeholder"
-	readRange := "readRange_placeholder"
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
 	if err != nil {
 		log.Fatal("Unable to retrieve data from sheet: %v", err)
