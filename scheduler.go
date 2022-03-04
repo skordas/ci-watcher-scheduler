@@ -7,7 +7,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/skordas/ci-watcher-scheduler/tools/debug"
+	"github.com/skordas/ci-watcher-scheduler/spreadsheets/engineer"
+	"github.com/skordas/ci-watcher-scheduler/tools/logging"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -18,11 +19,10 @@ func main() {
 	// Get Environment Variables
 	credentialsJson := os.Getenv("CREDENTIALS")
 	spreadsheetId := os.Getenv("SPREADSHEET_ID")
-	readRange := os.Getenv("ENGINEERS_SHEET")
-	debug.Log("info", "First info")
-	debug.Log("error", "Here some error")
-	debug.Log("warning", "some warning")
-	debug.Log("debug", "Here is some dubugging")
+	// TODO move sheets ranges to some properties file
+	engineersRange := "Engineers!A2:S"
+	// holidaysRange := "Holidays!A2:C"
+	// scheduleRange := "CI_Watch_Schedule!A2:L"
 
 	ctx := context.Background()
 	b, err := ioutil.ReadFile(credentialsJson)
@@ -41,8 +41,10 @@ func main() {
 		log.Fatalf("Unable to retrive Sheets client: %v", err)
 	}
 
+	engineersMap := make(map[string]engineer)
+
 	//Some first test if it's working
-	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
+	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, engineersRange).Do()
 	if err != nil {
 		log.Fatal("Unable to retrieve data from sheet: %v", err)
 	}
@@ -52,7 +54,7 @@ func main() {
 	} else {
 		fmt.Println("Here are some Values:")
 		for _, row := range resp.Values {
-			fmt.Printf("%s, %s, %s\n", row[0], row[1], row[2])
+			logging.Debug("%s, %s, %s", row[0], row[1], row[2])
 		}
 	}
 }
