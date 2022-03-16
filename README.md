@@ -13,4 +13,18 @@ export SPREADSHEET_ID=your_google_docs_spreadsheet_id
 export CREDENTIALS=/path/to/your/credentials.json
 export DEBUG=true/false # true will add additional debug informations in logs
 export CI=true/false # true will turn off colors from logs
+export DATE='3/9/2022' # Temportary way of getting day to schedule (format: M/D/YYYY)
 ```
+
+## TODO (random order)
+- Clean up all TODOs in code
+- Filtering by holidays
+- Sending calendar event for Watchers
+- getting PTO from calendar
+- adding buddy for New To CI Watcher
+- getting parameters (like date) from command line
+- Adding comments about holidays and PTO in spreadsheet
+
+## Need to decide
+- Default trigger? - Jenkins or by user?
+- Range of date? - one date at once and if needed loop in jenkins, or everything managed by scheduler?

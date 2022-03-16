@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-var Reset = "\033[0m"
-var Red = "\033[31m"
-var Blue = "\033[34m"
-var Purple = "\033[35m"
+var reset = "\033[0m"
+var red = "\033[31m"
+var blue = "\033[34m"
+var purple = "\033[35m"
 
 func Info(s string, a ...interface{}) {
 	s = fmt.Sprintf(s, a...)
@@ -18,30 +18,30 @@ func Info(s string, a ...interface{}) {
 }
 
 func Warning(s string, a ...interface{}) {
-	SetColors()
+	setColors()
 	s = fmt.Sprintf(s, a...)
-	log.Println(Blue + "[WARNING] " + s + Reset)
+	log.Println(blue + "[WARNING] " + s + reset)
 }
 
 func Error(s string, a ...interface{}) {
-	SetColors()
+	setColors()
 	s = fmt.Sprintf(s, a...)
-	log.Println(Red + "[ERROR] " + s + Reset)
+	log.Println(red + "[ERROR] " + s + reset)
 }
 
 func Debug(s string, a ...interface{}) {
 	if strings.ToUpper(os.Getenv("DEBUG")) == "TRUE" {
-		SetColors()
+		setColors()
 		s = fmt.Sprintf(s, a...)
-		log.Println(Purple + "[DEBUG] " + Reset + s)
+		log.Println(purple + "[DEBUG] " + reset + s)
 	}
 }
 
-func SetColors() {
+func setColors() {
 	if strings.ToUpper(os.Getenv("CI")) == "TRUE" {
-		Reset = ""
-		Red = ""
-		Blue = ""
-		Purple = ""
+		reset = ""
+		red = ""
+		blue = ""
+		purple = ""
 	}
 }

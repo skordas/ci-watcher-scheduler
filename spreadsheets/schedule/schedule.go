@@ -41,14 +41,14 @@ func New(date interface{}, manager interface{}, e2eWatcherY0 interface{},
 		upgradeWatcherY4.(string),
 	}
 
-	logging.Debug("------ Getting schedule from spreadsheet ------")
+	logging.Debug("------ Creating a new schedule ------")
 	logging.Debug("Date: %s", sch.Date)
 	logging.Debug("Manager: %s", sch.Manager)
 	logging.Debug("E2E Watcher latest: %s", sch.E2eWatcherY0)
-	logging.Debug("E2E Watcher latest -1 : %s", sch.E2eWatcherY1)
-	logging.Debug("E2E Watcher latest -2 : %s", sch.E2eWatcherY2)
-	logging.Debug("E2E Watcher latest -3 : %s", sch.E2eWatcherY3)
-	logging.Debug("E2E Watcher latest -4 : %s", sch.E2eWatcherY4)
+	logging.Debug("E2E Watcher latest - 1 : %s", sch.E2eWatcherY1)
+	logging.Debug("E2E Watcher latest - 2 : %s", sch.E2eWatcherY2)
+	logging.Debug("E2E Watcher latest - 3 : %s", sch.E2eWatcherY3)
+	logging.Debug("E2E Watcher latest - 4 : %s", sch.E2eWatcherY4)
 	logging.Debug("Upgrade Watcher latest: %s", sch.UpgrWatcherY0)
 	logging.Debug("Upgrade Watcher latest - 1: %s", sch.UpgrWatcherY1)
 	logging.Debug("Upgrade Watcher latest - 2: %s", sch.UpgrWatcherY2)

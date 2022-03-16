@@ -26,6 +26,7 @@ type Engineer struct {
 	UpgrY2       bool   // 16 - True for CI-watcher for Upgrade v. 4.y-2
 	UpgrY3       bool   // 17 - True for CI-watcher for Upgrade v. 4.y-3
 	UpgrY4       bool   // 18 - True for CI-watcher for Upgrade v. 4.y-4
+	Activity     int    // 19 - Number of times Engineer was working as Watcher
 }
 
 func New(kerberos interface{}, team interface{}, country interface{},
@@ -55,6 +56,7 @@ func New(kerberos interface{}, team interface{}, country interface{},
 		parseBool(upgrY2.(string)),
 		parseBool(upgrY3.(string)),
 		parseBool(upgrY4.(string)),
+		0,
 	}
 
 	logging.Debug("------ Getting engineer from spreadsheet ------")
@@ -77,6 +79,7 @@ func New(kerberos interface{}, team interface{}, country interface{},
 	logging.Debug("Upgrade latest - 2: %t", e.UpgrY2)
 	logging.Debug("Upgrade latest - 3: %t", e.UpgrY3)
 	logging.Debug("Upgrade latest - 4: %t", e.UpgrY4)
+	logging.Debug("No of times engineer was active: %d", e.Activity)
 
 	return e
 }
