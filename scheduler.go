@@ -1,120 +1,35 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"io/ioutil"
-	"log"
-
 	"os"
 	"time"
 
+	"github.com/skordas/ci-watcher-scheduler/spreadsheets"
 	"github.com/skordas/ci-watcher-scheduler/spreadsheets/engineer"
 	"github.com/skordas/ci-watcher-scheduler/spreadsheets/holiday"
 	"github.com/skordas/ci-watcher-scheduler/spreadsheets/schedule"
 	"github.com/skordas/ci-watcher-scheduler/tools/logging"
-
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/option"
-	"google.golang.org/api/sheets/v4"
 )
 
 const layoutUS = "1/2/2006"
 
-var scheduleCurrent = make(map[string]schedule.Schedule)
+var currentSchedule = make(map[string]schedule.Schedule)
 var engineers = make(map[string]engineer.Engineer)
 var holidays = []holiday.Holiday{}
 
 func main() {
-	// Get Environment Variables
-	credentialsJson := os.Getenv("CREDENTIALS")
-	spreadsheetId := os.Getenv("SPREADSHEET_ID")
 	dayToSchedule := os.Getenv("DATE")
-	// TODO move sheets ranges to some properties file
-	engineersRange := "Engineers!A2:S"
-	holidaysRange := "Holidays!A2:C"
-	scheduleRange := "CI_Watch_Schedule!A2:L"
-
-	ctx := context.Background()
-	credentials, err := ioutil.ReadFile(credentialsJson)
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
-	}
-
-	config, err := google.JWTConfigFromJSON(credentials, "https://www.googleapis.com/auth/spreadsheets")
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-
-	client := config.Client(ctx)
-	srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		log.Fatalf("Unable to retrive Sheets client: %v", err)
-	}
-
-	// TODO - move getting engineers outside main func.
-	// Getting engineers
-	logging.Info("------ Getting list of engineers ------")
-	respEngineers, err := srv.Spreadsheets.Values.Get(spreadsheetId, engineersRange).Do()
-	if err != nil {
-		log.Fatal("Unable to retrieve data from sheet: %v", err)
-	}
-
-	if len(respEngineers.Values) == 0 {
-		logging.Warning("No data found in range: %s", engineersRange)
-	} else {
-		for _, row := range respEngineers.Values {
-			e := engineer.New(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
-				row[7], row[8], row[9], row[10], row[11], row[12], row[13],
-				row[14], row[15], row[16], row[17], row[18])
-			engineers[e.Kerberos] = e
-		}
-	}
-
-	// TODO - move getting holidays outside main func.
-	// Getting holidays
-	logging.Info("------ Getting list of holidays ------")
-	respHolidays, err := srv.Spreadsheets.Values.Get(spreadsheetId, holidaysRange).Do()
-	if err != nil {
-		log.Fatal("Unable to retrive data from sheet: %v", err)
-	}
-
-	if len(respHolidays.Values) == 0 {
-		logging.Warning("No data found in range: %s", holidaysRange)
-	} else {
-		for _, row := range respHolidays.Values {
-			h := holiday.New(row[0], row[1], row[2])
-			holidays = append(holidays, h)
-		}
-	}
-
-	// TODO - move getting scheduler outside main func
-	// TODO - getting schedule only specific number of days back (ex. last 30 days)
-	// Getting current schedule.
-	// TODO - for now date as a string - later as a date
-	logging.Info("------ Getting current schedule ------")
-	respSchedule, err := srv.Spreadsheets.Values.Get(spreadsheetId, scheduleRange).Do()
-	if err != nil {
-		log.Fatal("Unable to retrive data from sheet: %v", err)
-	}
-
-	if len(respSchedule.Values) == 0 {
-		logging.Warning("No data found in range :s", scheduleRange)
-	} else {
-		for _, row := range respSchedule.Values {
-			sch := schedule.New(row[0], row[1], row[2], row[3], row[4], row[5],
-				row[6], row[7], row[8], row[9], row[10], row[11])
-			scheduleCurrent[sch.Date] = sch
-		}
-	}
+	engineers = spreadsheets.GetEngineers()
+	holidays = spreadsheets.GetHolidays()
+	currentSchedule = spreadsheets.GetCurrentSchedule()
 
 	// TODO - move this outside main func
 	// Counting activity of engineers
 
-	if len(scheduleCurrent) == 0 {
+	if len(currentSchedule) == 0 {
 		logging.Info("No history of engineers activity!")
 	} else {
-		for day, scheduleForDay := range scheduleCurrent {
+		for day, scheduleForDay := range currentSchedule {
 			logging.Info("Checking activity of engineers for date: %s", day)
 			addActivity(engineers, scheduleForDay.E2eWatcherY0)
 			addActivity(engineers, scheduleForDay.E2eWatcherY1)
@@ -132,7 +47,6 @@ func main() {
 	logging.Info("------ Creating schedule for date: %s ------", dayToSchedule)
 	e2ey0Watcher := getWatcherFor("e2ey0", dayToSchedule)
 	addActivity(engineers, e2ey0Watcher)
-	fmt.Printf("Right now: %s : %d\n", engineers[e2ey0Watcher].Kerberos, engineers[e2ey0Watcher].Activity)
 	e2ey1Watcher := getWatcherFor("e2ey1", dayToSchedule)
 	addActivity(engineers, e2ey1Watcher)
 	e2ey2Watcher := getWatcherFor("e2ey2", dayToSchedule)
@@ -156,27 +70,7 @@ func main() {
 		e2ey2Watcher, e2ey3Watcher, e2ey4Watcher, upgry0Watcher, upgry1Watcher,
 		upgry2Watcher, upgry3Watcher, upgry4Watcher)
 
-	// store in spreadsheet
-	var vr sheets.ValueRange
-	myval := []interface{}{
-		scheduleToStore.Date,
-		scheduleToStore.Manager,
-		scheduleToStore.E2eWatcherY0,
-		scheduleToStore.E2eWatcherY1,
-		scheduleToStore.E2eWatcherY2,
-		scheduleToStore.E2eWatcherY3,
-		scheduleToStore.E2eWatcherY4,
-		scheduleToStore.UpgrWatcherY0,
-		scheduleToStore.UpgrWatcherY1,
-		scheduleToStore.UpgrWatcherY2,
-		scheduleToStore.UpgrWatcherY3,
-		scheduleToStore.UpgrWatcherY4,
-	}
-	vr.Values = append(vr.Values, myval)
-	_, err = srv.Spreadsheets.Values.Append(spreadsheetId, "CI_Watch_Schedule!A1", &vr).ValueInputOption("USER_ENTERED").Do()
-	if err != nil {
-		logging.Error("Unable to store data in sheet. %v", err)
-	}
+	spreadsheets.StoreSchedule(scheduleToStore)
 }
 
 func addActivity(engineersMap map[string]engineer.Engineer, key string) {

@@ -28,3 +28,4 @@ export DATE='3/9/2022' # Temportary way of getting day to schedule (format: M/D/
 ## Need to decide
 - Default trigger? - Jenkins or by user?
 - Range of date? - one date at once and if needed loop in jenkins, or everything managed by scheduler?
+- Holidays - Take from spreadsheet or from calendar?
