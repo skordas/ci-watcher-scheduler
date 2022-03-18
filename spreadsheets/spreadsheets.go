@@ -16,8 +16,16 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
+// inputOption is used by ValueInputOption in spreadsheets.
+// Values saved in spreadsheet cells will be interpreted like entered by user
+// string: 3/14/2022 after insert will be automatically format to dates
+const inputOption string = "USER_ENTERED"
+
 var credentialsJson string
 var spreadsheetId string
+
+// TODO - Not use hardcoded values. Need to decide how we want to pass this
+// values. os ENV or some file.
 var engineersRange string = "Engineers!A2:S"
 var holidaysRange string = "Holidays!A2:C"
 var scheduleRange string = "CI_Watch_Schedule!A2:L"
@@ -25,6 +33,8 @@ var scheduleRange string = "CI_Watch_Schedule!A2:L"
 var srv *sheets.Service
 var initiate bool = true
 
+// InitiateSrv is getting all informations needed to start connection
+// with spreadsheets
 func initiateSrv() {
 	if initiate {
 		logging.Info("------ Staring sheets client ------")
@@ -54,6 +64,7 @@ func initiateSrv() {
 	}
 }
 
+// Get list of engineers from spreadsheet
 func GetEngineers() map[string]engineer.Engineer {
 	initiateSrv()
 
@@ -68,15 +79,16 @@ func GetEngineers() map[string]engineer.Engineer {
 		logging.Warning("No data found in range: %s", engineersRange)
 	} else {
 		for _, row := range resp.Values {
-			e := engineer.New(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
-				row[7], row[8], row[9], row[10], row[11], row[12], row[13],
-				row[14], row[15], row[16], row[17], row[18])
+			e := engineer.New(row[0], row[1], row[2], row[3], row[4], row[5],
+				row[6], row[7], row[8], row[9], row[10], row[11], row[12],
+				row[13], row[14], row[15], row[16], row[17], row[18])
 			engineers[e.Kerberos] = e
 		}
 	}
 	return engineers
 }
 
+// Get list of holidays from spreadsheet
 func GetHolidays() []holiday.Holiday {
 	initiateSrv()
 
@@ -98,6 +110,7 @@ func GetHolidays() []holiday.Holiday {
 	return holidays
 }
 
+// Get current schedule from spreadsheet
 func GetCurrentSchedule() map[string]schedule.Schedule {
 	initiateSrv()
 
@@ -120,6 +133,7 @@ func GetCurrentSchedule() map[string]schedule.Schedule {
 	return scheduleCurrent
 }
 
+// store a new line is schedule spreadsheet
 func StoreSchedule(schedule schedule.Schedule) {
 	initiateSrv()
 
@@ -139,7 +153,7 @@ func StoreSchedule(schedule schedule.Schedule) {
 		schedule.UpgrWatcherY4,
 	}
 	vr.Values = append(vr.Values, myval)
-	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, "CI_Watch_Schedule!A1", &vr).ValueInputOption("USER_ENTERED").Do()
+	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, scheduleRange, &vr).ValueInputOption(inputOption).Do()
 	if err != nil {
 		logging.Error("Unable to store data in sheet. %v", err)
 	}
