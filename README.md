@@ -18,7 +18,6 @@ export DATE='3/9/2022' # Temportary way of getting day to schedule (format: M/D/
 
 ## TODO (random order)
 - Clean up all TODOs in code
-- Filtering by holidays
 - Sending calendar event for Watchers
 - getting PTO from calendar
 - adding buddy for New To CI Watcher
