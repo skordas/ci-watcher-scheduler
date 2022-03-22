@@ -21,20 +21,23 @@ type Engineer struct {
 	E2eY2        bool   // 11 - True for CI-watcher for E2E v. 4.y-2
 	E2eY3        bool   // 12 - True for CI-watcher for E2E v. 4.y-3
 	E2eY4        bool   // 13 - True for CI-watcher for E2E v. 4.y-4
-	UpgrY0       bool   // 14 - True for CI-watcher for Upgrade v. 4.y
-	UpgrY1       bool   // 15 - True for CI-watcher for Upgrade v. 4.y-1
-	UpgrY2       bool   // 16 - True for CI-watcher for Upgrade v. 4.y-2
-	UpgrY3       bool   // 17 - True for CI-watcher for Upgrade v. 4.y-3
-	UpgrY4       bool   // 18 - True for CI-watcher for Upgrade v. 4.y-4
-	Activity     int    // 19 - Number of times Engineer was working as Watcher
+	E2eY5        bool   // 14 - True for CI-watcher for E2E v. 4.y-5
+	UpgrY0       bool   // 15 - True for CI-watcher for Upgrade v. 4.y
+	UpgrY1       bool   // 16 - True for CI-watcher for Upgrade v. 4.y-1
+	UpgrY2       bool   // 17 - True for CI-watcher for Upgrade v. 4.y-2
+	UpgrY3       bool   // 18 - True for CI-watcher for Upgrade v. 4.y-3
+	UpgrY4       bool   // 19 - True for CI-watcher for Upgrade v. 4.y-4
+	UpgrY5       bool   // 20 - True for CI-watcher for Upgrade v. 4.y-5
+	Activity     int    // 21 - Number of times Engineer was working as Watcher
 }
 
 func New(kerberos interface{}, team interface{}, country interface{},
 	week interface{}, manager interface{}, releaseLead interface{},
 	teamLead interface{}, newToCi interface{}, newToCiBuddy interface{},
 	e2eY0 interface{}, e2eY1 interface{}, e2eY2 interface{}, e2eY3 interface{},
-	e2eY4 interface{}, upgrY0 interface{}, upgrY1 interface{},
-	upgrY2 interface{}, upgrY3 interface{}, upgrY4 interface{}) Engineer {
+	e2eY4 interface{}, e2ey5 interface{}, upgrY0 interface{},
+	upgrY1 interface{}, upgrY2 interface{}, upgrY3 interface{},
+	upgrY4 interface{}, upgrY5 interface{}) Engineer {
 
 	e := Engineer{
 		kerberos.(string),
@@ -51,11 +54,13 @@ func New(kerberos interface{}, team interface{}, country interface{},
 		parseBool(e2eY2.(string)),
 		parseBool(e2eY3.(string)),
 		parseBool(e2eY4.(string)),
+		parseBool(e2ey5.(string)),
 		parseBool(upgrY0.(string)),
 		parseBool(upgrY1.(string)),
 		parseBool(upgrY2.(string)),
 		parseBool(upgrY3.(string)),
 		parseBool(upgrY4.(string)),
+		parseBool(upgrY5.(string)),
 		0,
 	}
 
@@ -74,11 +79,13 @@ func New(kerberos interface{}, team interface{}, country interface{},
 	logging.Debug("E2E latest - 2: %t", e.E2eY2)
 	logging.Debug("E2E latest - 3: %t", e.E2eY3)
 	logging.Debug("E2E latest - 4: %t", e.E2eY4)
+	logging.Debug("E2E latest - 5: %t", e.E2eY5)
 	logging.Debug("Upgrade latest: %t", e.UpgrY0)
 	logging.Debug("Upgrade latest - 1: %t", e.UpgrY1)
 	logging.Debug("Upgrade latest - 2: %t", e.UpgrY2)
 	logging.Debug("Upgrade latest - 3: %t", e.UpgrY3)
 	logging.Debug("Upgrade latest - 4: %t", e.UpgrY4)
+	logging.Debug("Upgrade latest - 5: %t", e.UpgrY5)
 	logging.Debug("No of times engineer was active: %d", e.Activity)
 
 	return e

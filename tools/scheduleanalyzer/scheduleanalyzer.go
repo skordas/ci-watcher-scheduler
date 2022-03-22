@@ -45,16 +45,19 @@ func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSched
 	}
 }
 
+// Values for assigned version:
 // e2ey0 - e2e watcher for latest release
 // e2ey1 - e2e watcher for latest - 1 release
 // e2ey2 - e2e watcher for latest - 2 release
 // e2ey3 - e2e watcher for latest - 3 release
 // e2ey4 - e2e watcher for latest - 4 release
+// e2ey5 - e2e watcher for latest - 5 release
 // upgry0 - e2e watcher for latest release
 // upgry1 - e2e watcher for latest - 1 release
 // upgry2 - e2e watcher for latest - 2 release
 // upgry3 - e2e watcher for latest - 3 release
 // upgry4 - e2e watcher for latest - 4 release
+// upgry5 - e2e watcher for latest - 5 release
 func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Engineer, date string, holidays []holiday.Holiday) string {
 	// coping map
 	watchers := make(map[string]engineer.Engineer)
@@ -70,6 +73,14 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 			delete(watchers, id)
 			continue
 		}
+
+		// ignore New to CI
+		// TODO - check if engineer is a buddy - then add this engineer.
+		if properties.NewToCi {
+			logging.Debug("Removing %s - New To CI - will be added with buddy", id)
+			delete(watchers, id)
+		}
+
 		// ignore not current week
 		if properties.Week != weekNum(date) {
 			logging.Debug("Removing %s as watcher - not current week", id)
@@ -118,6 +129,12 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 				delete(watchers, id)
 				continue
 			}
+		case "e2ey5":
+			if !properties.E2eY5 {
+				logging.Debug("Removing %s as watcher - not assigned version: E2E latest - 5", id)
+				delete(watchers, id)
+				continue
+			}
 		case "upgry0":
 			if !properties.UpgrY0 {
 				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest", id)
@@ -144,7 +161,13 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 			}
 		case "upgry4":
 			if !properties.UpgrY4 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 3", id)
+				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 4", id)
+				delete(watchers, id)
+				continue
+			}
+		case "upgry5":
+			if !properties.UpgrY5 {
+				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 5", id)
 				delete(watchers, id)
 				continue
 			}

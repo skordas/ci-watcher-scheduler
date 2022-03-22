@@ -26,9 +26,9 @@ var spreadsheetId string
 
 // TODO - Not use hardcoded values. Need to decide how we want to pass this
 // values. os ENV or some file.
-var engineersRange string = "Engineers!A2:S"
+var engineersRange string = "Engineers!A2:U"
 var holidaysRange string = "Holidays!A2:C"
-var scheduleRange string = "CI_Watch_Schedule!A2:L"
+var scheduleRange string = "CI_Watch_Schedule!A2:N"
 
 var srv *sheets.Service
 var initiate bool = true
@@ -81,7 +81,8 @@ func GetEngineers() map[string]engineer.Engineer {
 		for _, row := range resp.Values {
 			e := engineer.New(row[0], row[1], row[2], row[3], row[4], row[5],
 				row[6], row[7], row[8], row[9], row[10], row[11], row[12],
-				row[13], row[14], row[15], row[16], row[17], row[18])
+				row[13], row[14], row[15], row[16], row[17], row[18], row[19],
+				row[20])
 			engineers[e.Kerberos] = e
 		}
 	}
@@ -126,7 +127,7 @@ func GetCurrentSchedule() map[string]schedule.Schedule {
 	} else {
 		for _, row := range resp.Values {
 			sch := schedule.New(row[0], row[1], row[2], row[3], row[4], row[5],
-				row[6], row[7], row[8], row[9], row[10], row[11])
+				row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13])
 			scheduleCurrent[sch.Date] = sch
 		}
 	}
@@ -146,11 +147,13 @@ func StoreSchedule(schedule schedule.Schedule) {
 		schedule.E2eWatcherY2,
 		schedule.E2eWatcherY3,
 		schedule.E2eWatcherY4,
+		schedule.E2eWatcherY5,
 		schedule.UpgrWatcherY0,
 		schedule.UpgrWatcherY1,
 		schedule.UpgrWatcherY2,
 		schedule.UpgrWatcherY3,
 		schedule.UpgrWatcherY4,
+		schedule.UpgrWatcherY5,
 	}
 	vr.Values = append(vr.Values, myval)
 	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, scheduleRange, &vr).ValueInputOption(inputOption).Do()

@@ -35,6 +35,8 @@ func main() {
 	sa.AddActivity(engineers, e2ey3Watcher)
 	e2ey4Watcher := sa.GetWatcherFor("e2ey4", engineers, dayToSchedule, holidays)
 	sa.AddActivity(engineers, e2ey4Watcher)
+	e2ey5Watcher := sa.GetWatcherFor("e2ey5", engineers, dayToSchedule, holidays)
+	sa.AddActivity(engineers, e2ey5Watcher)
 	upgry0Watcher := sa.GetWatcherFor("upgry0", engineers, dayToSchedule, holidays)
 	sa.AddActivity(engineers, upgry0Watcher)
 	upgry1Watcher := sa.GetWatcherFor("upgry1", engineers, dayToSchedule, holidays)
@@ -45,11 +47,13 @@ func main() {
 	sa.AddActivity(engineers, upgry3Watcher)
 	upgry4Watcher := sa.GetWatcherFor("upgry4", engineers, dayToSchedule, holidays)
 	sa.AddActivity(engineers, upgry4Watcher)
+	upgry5Watcher := sa.GetWatcherFor("upgry5", engineers, dayToSchedule, holidays)
+	sa.AddActivity(engineers, upgry5Watcher)
 
 	// store schedule in spreadsheet
 	scheduleToStore := schedule.New(dayToSchedule, "", e2ey0Watcher, e2ey1Watcher,
-		e2ey2Watcher, e2ey3Watcher, e2ey4Watcher, upgry0Watcher, upgry1Watcher,
-		upgry2Watcher, upgry3Watcher, upgry4Watcher)
+		e2ey2Watcher, e2ey3Watcher, e2ey4Watcher, e2ey5Watcher, upgry0Watcher,
+		upgry1Watcher, upgry2Watcher, upgry3Watcher, upgry4Watcher, upgry5Watcher)
 
 	spreadsheets.StoreSchedule(scheduleToStore)
 }
