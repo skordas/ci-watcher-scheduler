@@ -13,7 +13,7 @@ type Engineer struct {
 	Week         int    //  3 - Number of week
 	Manager      bool   //  4 - true for managers
 	ReleaseLead  bool   //  5 - true for release leaders
-	TeamLead     bool   //  6 - true fdo team leaders
+	TeamLead     bool   //  6 - true for team leaders
 	NewToCi      bool   //  7 - true if CI-Watcher role is a new thing for engineer
 	NewToCiBuddy string //  8 - Kerberos of engineer which will be helping
 	E2eY0        bool   //  9 - True for CI-watcher for E2E v. 4.y

@@ -36,11 +36,13 @@ func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSched
 			AddActivity(engineers, scheduleForDay.E2eWatcherY2)
 			AddActivity(engineers, scheduleForDay.E2eWatcherY3)
 			AddActivity(engineers, scheduleForDay.E2eWatcherY4)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY5)
 			AddActivity(engineers, scheduleForDay.UpgrWatcherY0)
 			AddActivity(engineers, scheduleForDay.UpgrWatcherY1)
 			AddActivity(engineers, scheduleForDay.UpgrWatcherY2)
 			AddActivity(engineers, scheduleForDay.UpgrWatcherY3)
 			AddActivity(engineers, scheduleForDay.UpgrWatcherY4)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY5)
 		}
 	}
 }
