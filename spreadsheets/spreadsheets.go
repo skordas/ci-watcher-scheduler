@@ -29,6 +29,7 @@ var spreadsheetId string
 var engineersRange string = "Engineers!A2:U"
 var holidaysRange string = "Holidays!A2:C"
 var scheduleRange string = "CI_Watch_Schedule!A2:N"
+var insertScheduleRange string = "CI_Watch_Schedule!A1:N1"
 
 var srv *sheets.Service
 var initiate bool = true
@@ -137,6 +138,7 @@ func GetCurrentSchedule() map[string]schedule.Schedule {
 // store a new line is schedule spreadsheet
 func StoreSchedule(schedule schedule.Schedule) {
 	initiateSrv()
+	insertEmptyRow()
 
 	var vr sheets.ValueRange
 	myval := []interface{}{
@@ -156,8 +158,32 @@ func StoreSchedule(schedule schedule.Schedule) {
 		schedule.UpgrWatcherY5,
 	}
 	vr.Values = append(vr.Values, myval)
-	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, scheduleRange, &vr).ValueInputOption(inputOption).Do()
+	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, insertScheduleRange, &vr).ValueInputOption(inputOption).Do()
 	if err != nil {
 		logging.Error("Unable to store data in sheet. %v", err)
 	}
+}
+
+func insertEmptyRow() {
+	emptyLine := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: []*sheets.Request{
+			&sheets.Request{
+				InsertDimension: &sheets.InsertDimensionRequest{
+					Range: &sheets.DimensionRange{
+						SheetId:    0,
+						Dimension:  "ROWS",
+						StartIndex: 1,
+						EndIndex:   2,
+					},
+					InheritFromBefore: false,
+				},
+			},
+		},
+	}
+
+	_, err := srv.Spreadsheets.BatchUpdate(spreadsheetId, emptyLine).Do()
+	if err != nil {
+		logging.Error("Unable insert empty line. %v", err)
+	}
+	logging.Debug("Empty line inserted!")
 }
