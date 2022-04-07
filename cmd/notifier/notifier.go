@@ -9,8 +9,8 @@ import (
 	"os"
 	// "time"
 
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets"
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/schedule"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
 	"github.com/skordas/ci-watcher-scheduler/tools/logging"
 
 	"golang.org/x/oauth2/google"

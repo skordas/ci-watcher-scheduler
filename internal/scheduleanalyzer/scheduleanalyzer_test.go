@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/engineer"
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/holiday"
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/schedule"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
 )
 
 func TestAddActivity(t *testing.T) {

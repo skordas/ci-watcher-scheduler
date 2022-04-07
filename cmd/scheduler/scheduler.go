@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets"
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/engineer"
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/holiday"
-	"github.com/skordas/ci-watcher-scheduler/spreadsheets/schedule"
+	sa "github.com/skordas/ci-watcher-scheduler/internal/scheduleanalyzer"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
+	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
 	"github.com/skordas/ci-watcher-scheduler/tools/logging"
-	sa "github.com/skordas/ci-watcher-scheduler/tools/scheduleanalyzer"
 )
 
 var currentSchedule = make(map[string]schedule.Schedule)
