@@ -3,6 +3,7 @@ module github.com/skordas/ci-watcher-scheduler
 go 1.17
 
 require (
+	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a
 	google.golang.org/api v0.73.0
 )

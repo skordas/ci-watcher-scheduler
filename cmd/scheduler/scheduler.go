@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	sa "github.com/skordas/ci-watcher-scheduler/internal/scheduleanalyzer"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
-	"github.com/skordas/ci-watcher-scheduler/tools/logging"
 )
 
 var currentSchedule = make(map[string]schedule.Schedule)
@@ -24,7 +24,7 @@ func main() {
 	// Counting activity of engineers
 	sa.CountEngineersActivity(engineers, currentSchedule)
 
-	logging.Info("------ Creating schedule for date: %s ------", dayToSchedule)
+	log.WithField("dayToSchedule", dayToSchedule).Info("Creating schedule")
 	e2ey0Watcher := sa.GetWatcherFor("e2ey0", engineers, dayToSchedule, holidays)
 	sa.AddActivity(engineers, e2ey0Watcher)
 	e2ey1Watcher := sa.GetWatcherFor("e2ey1", engineers, dayToSchedule, holidays)

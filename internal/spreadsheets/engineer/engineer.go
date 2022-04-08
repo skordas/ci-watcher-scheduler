@@ -3,7 +3,7 @@ package engineer
 import (
 	"strconv"
 
-	"github.com/skordas/ci-watcher-scheduler/tools/logging"
+	log "github.com/sirupsen/logrus"
 )
 
 type Engineer struct {
@@ -64,29 +64,30 @@ func New(kerberos interface{}, team interface{}, country interface{},
 		0,
 	}
 
-	logging.Debug("------ Getting engineer from spreadsheet ------")
-	logging.Debug("Kerberos: %s", e.Kerberos)
-	logging.Debug("Team: %s", e.Team)
-	logging.Debug("Country: %s", e.Country)
-	logging.Debug("Week: %d", e.Week)
-	logging.Debug("Manager: %t", e.Manager)
-	logging.Debug("Release Lead: %t", e.ReleaseLead)
-	logging.Debug("Team Lead: %t", e.TeamLead)
-	logging.Debug("New to CI: %t", e.NewToCi)
-	logging.Debug("New to CI buddy: %s", e.NewToCiBuddy)
-	logging.Debug("E2E latest: %t", e.E2eY0)
-	logging.Debug("E2E latest - 1: %t", e.E2eY1)
-	logging.Debug("E2E latest - 2: %t", e.E2eY2)
-	logging.Debug("E2E latest - 3: %t", e.E2eY3)
-	logging.Debug("E2E latest - 4: %t", e.E2eY4)
-	logging.Debug("E2E latest - 5: %t", e.E2eY5)
-	logging.Debug("Upgrade latest: %t", e.UpgrY0)
-	logging.Debug("Upgrade latest - 1: %t", e.UpgrY1)
-	logging.Debug("Upgrade latest - 2: %t", e.UpgrY2)
-	logging.Debug("Upgrade latest - 3: %t", e.UpgrY3)
-	logging.Debug("Upgrade latest - 4: %t", e.UpgrY4)
-	logging.Debug("Upgrade latest - 5: %t", e.UpgrY5)
-	logging.Debug("No of times engineer was active: %d", e.Activity)
+	log.WithFields(log.Fields{
+		"Kerberos":           e.Kerberos,
+		"Team":               e.Team,
+		"Country":            e.Country,
+		"Week":               e.Week,
+		"Manager":            e.Manager,
+		"Release Lead":       e.ReleaseLead,
+		"Team Lead":          e.TeamLead,
+		"New to CI":          e.NewToCi,
+		"New to CI Buddy":    e.NewToCiBuddy,
+		"E2E latest":         e.E2eY0,
+		"E2E latest - 1":     e.E2eY1,
+		"E2E latest - 2":     e.E2eY2,
+		"E2E latest - 3":     e.E2eY3,
+		"E2E latest - 4":     e.E2eY4,
+		"E2E latest - 5":     e.E2eY5,
+		"Upgrade latest":     e.UpgrY0,
+		"Upgrade latest - 1": e.UpgrY1,
+		"Upgrade latest - 2": e.UpgrY2,
+		"Upgrade latest - 3": e.UpgrY3,
+		"Upgrade latest - 4": e.UpgrY4,
+		"Upgrade latest - 5": e.UpgrY5,
+		"Activity":           e.Activity,
+	}).Debug("Getting engineer from spreadsheet")
 
 	return e
 }

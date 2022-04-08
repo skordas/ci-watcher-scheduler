@@ -1,7 +1,8 @@
 package holiday
 
-//import "time"
-import "github.com/skordas/ci-watcher-scheduler/tools/logging"
+import (
+	log "github.com/sirupsen/logrus"
+)
 
 type Holiday struct {
 	Country string // Region where in holiday
@@ -16,10 +17,11 @@ func New(country interface{}, date interface{}, name interface{}) Holiday {
 		name.(string),
 	}
 
-	logging.Debug("------ Getting holiday from spreadsheet ------")
-	logging.Debug("Country: %s", h.Country)
-	logging.Debug("Date: %s", h.Date)
-	logging.Debug("Name: %s", h.Name)
+	log.WithFields(log.Fields{
+		"Country": h.Country,
+		"Date":    h.Date,
+		"Name":    h.Name,
+	}).Debug("Getting Holiday from spreadsheet")
 
 	return h
 }

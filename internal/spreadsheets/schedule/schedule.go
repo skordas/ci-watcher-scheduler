@@ -1,8 +1,7 @@
 package schedule
 
-//import "time"
 import (
-	"github.com/skordas/ci-watcher-scheduler/tools/logging"
+	log "github.com/sirupsen/logrus"
 )
 
 type Schedule struct {
@@ -47,21 +46,22 @@ func New(date interface{}, manager interface{}, e2eWatcherY0 interface{},
 		upgradeWatcherY5.(string),
 	}
 
-	logging.Debug("------ Creating a new schedule ------")
-	logging.Debug("Date: %s", sch.Date)
-	logging.Debug("Manager: %s", sch.Manager)
-	logging.Debug("E2E Watcher latest: %s", sch.E2eWatcherY0)
-	logging.Debug("E2E Watcher latest - 1 : %s", sch.E2eWatcherY1)
-	logging.Debug("E2E Watcher latest - 2 : %s", sch.E2eWatcherY2)
-	logging.Debug("E2E Watcher latest - 3 : %s", sch.E2eWatcherY3)
-	logging.Debug("E2E Watcher latest - 4 : %s", sch.E2eWatcherY4)
-	logging.Debug("E2E Watcher latest - 5 : %s", sch.E2eWatcherY5)
-	logging.Debug("Upgrade Watcher latest: %s", sch.UpgrWatcherY0)
-	logging.Debug("Upgrade Watcher latest - 1: %s", sch.UpgrWatcherY1)
-	logging.Debug("Upgrade Watcher latest - 2: %s", sch.UpgrWatcherY2)
-	logging.Debug("Upgrade Watcher latest - 3: %s", sch.UpgrWatcherY3)
-	logging.Debug("Upgrade Watcher latest - 4: %s", sch.UpgrWatcherY4)
-	logging.Debug("Upgrade Watcher latest - 5: %s", sch.UpgrWatcherY5)
+	log.WithFields(log.Fields{
+		"Date":                       sch.Date,
+		"Manager":                    sch.Manager,
+		"E2E Watcher latest":         sch.E2eWatcherY0,
+		"E2E Watcher latest - 1":     sch.E2eWatcherY1,
+		"E2E Watcher latest - 2":     sch.E2eWatcherY2,
+		"E2E Watcher latest - 3":     sch.E2eWatcherY3,
+		"E2E Watcher latest - 4":     sch.E2eWatcherY4,
+		"E2E Watcher latest - 5":     sch.E2eWatcherY5,
+		"Upgrade Watche latest":      sch.UpgrWatcherY0,
+		"Upgrade Watcher latest - 1": sch.UpgrWatcherY1,
+		"Upgrade Watcher latest - 2": sch.UpgrWatcherY2,
+		"Upgrade Watcher latest - 3": sch.UpgrWatcherY3,
+		"Upgrade Watcher latest - 4": sch.UpgrWatcherY4,
+		"Upgrade Watcher latest - 5": sch.UpgrWatcherY5,
+	}).Debug("Creating a new schedule")
 
 	return sch
 }
