@@ -3,10 +3,10 @@ package scheduleanalyzer
 import (
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
-	"github.com/skordas/ci-watcher-scheduler/tools/logging"
 )
 
 const layoutUS = "1/2/2006"
@@ -17,7 +17,7 @@ func AddActivity(engineersMap map[string]engineer.Engineer, key string) {
 	if eng, ok := engineersMap[key]; ok {
 		eng.Activity++
 		engineersMap[key] = eng
-		logging.Debug("Adding activity for %s: now: %d", key, eng.Activity)
+		log.WithFields(log.Fields{"engineer": key, "Activity": eng.Activity}).Debug("Adding new activity")
 	}
 }
 
@@ -27,10 +27,10 @@ func AddActivity(engineersMap map[string]engineer.Engineer, key string) {
 // engeeners map.
 func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSchedule map[string]schedule.Schedule) {
 	if len(currentSchedule) == 0 {
-		logging.Info("No history of engineers activity!")
+		log.Info("No history of engineers activity!")
 	} else {
 		for day, scheduleForDay := range currentSchedule {
-			logging.Info("Checking activity of engineers for date: %s", day)
+			log.WithFields(log.Fields{"Date": day}).Info("Checking activity of ongineers")
 			AddActivity(engineers, scheduleForDay.E2eWatcherY0)
 			AddActivity(engineers, scheduleForDay.E2eWatcherY1)
 			AddActivity(engineers, scheduleForDay.E2eWatcherY2)
@@ -71,7 +71,7 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 	for id, properties := range engineers {
 		// ignore managers
 		if properties.Manager {
-			logging.Debug("Removing %s - Manager is for managing, not for watching", id)
+			log.WithField("Engineer", id).Debug("Manager is for managing, not for watching. Removing!")
 			delete(watchers, id)
 			continue
 		}
@@ -79,13 +79,13 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 		// ignore New to CI
 		// TODO - check if engineer is a buddy - then add this engineer.
 		if properties.NewToCi {
-			logging.Debug("Removing %s - New To CI - will be added with buddy", id)
+			log.WithField("Engineer", id).Debug("New To Ci - will be added with buddy. Removing!")
 			delete(watchers, id)
 		}
 
 		// ignore not current week
 		if properties.Week != weekNum(date) {
-			logging.Debug("Removing %s as watcher - not current week", id)
+			log.WithField("Engineer", id).Debug("Not assigned to current week. Removing!")
 			delete(watchers, id)
 			continue
 		}
@@ -94,7 +94,7 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 
 		// ignore during holidays
 		if itsHolidayInCountry(holidays, date, properties.Country) {
-			logging.Debug("Romoving %s as watcher - it's holiday in %s", id, properties.Country)
+			log.WithFields(log.Fields{"Engineer": id, "Country": properties.Country}).Debug("It's Holiday for this engineery. Removing")
 			delete(watchers, id)
 			continue
 		}
@@ -103,73 +103,73 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 		switch assignedVersion {
 		case "e2ey0":
 			if !properties.E2eY0 {
-				logging.Debug("Removing %s as watcher - not assigned version: E2E latest", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to E2E latest. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "e2ey1":
 			if !properties.E2eY1 {
-				logging.Debug("Removing %s as watcher - not assigned version: E2E latest - 1", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to E2E latest - 1. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "e2ey2":
 			if !properties.E2eY2 {
-				logging.Debug("Removing %s as watcher - not assigned version: E2E latest - 2", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to E2E latest - 2. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "e2ey3":
 			if !properties.E2eY3 {
-				logging.Debug("Removing %s as watcher - not assigned version: E2E latest - 3", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to E2E latest - 3. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "e2ey4":
 			if !properties.E2eY4 {
-				logging.Debug("Removing %s as watcher - not assigned version: E2E latest - 4", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to E2E latest - 4. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "e2ey5":
 			if !properties.E2eY5 {
-				logging.Debug("Removing %s as watcher - not assigned version: E2E latest - 5", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to E2E latest - 5. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "upgry0":
 			if !properties.UpgrY0 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to Upgrade latest. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "upgry1":
 			if !properties.UpgrY1 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 1", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to Upgrade latest - 1. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "upgry2":
 			if !properties.UpgrY2 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 2", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to Upgrade latest - 2. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "upgry3":
 			if !properties.UpgrY3 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 3", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to Upgrade latest - 3. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "upgry4":
 			if !properties.UpgrY4 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 4", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to Upgrade latest - 4. Removing!")
 				delete(watchers, id)
 				continue
 			}
 		case "upgry5":
 			if !properties.UpgrY5 {
-				logging.Debug("Removing %s as watcher - not assigned version: Upgrade latest - 5", id)
+				log.WithField("Engineer", id).Debug("Engineer not assigned to Upgrade latest - 5. Removing!")
 				delete(watchers, id)
 				continue
 			}
@@ -196,7 +196,7 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 	for i := 0; i < 100; i++ {
 		if v, found := candidates[i]; found {
 			theChosenOne = v[0]
-			logging.Info("The Chosen One for %s: %s", assignedVersion, theChosenOne)
+			log.WithFields(log.Fields{"Assigned Version": assignedVersion, "The Chosen One": theChosenOne}).Info("We got the winner!")
 			break
 		} else {
 			continue
@@ -208,7 +208,7 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 func weekNum(date string) int {
 	day, _ := time.Parse(layoutUS, date)
 	_, weekNow := day.ISOWeek()
-	logging.Debug("Week of the year: %d", weekNow)
+	log.WithField("WeekNo", weekNow).Debug("Week of the year")
 	mod := weekNow % 2
 	var weekNum int
 	if mod == 1 {
@@ -216,7 +216,7 @@ func weekNum(date string) int {
 	} else {
 		weekNum = 2
 	}
-	logging.Debug("Active week: %d", weekNum)
+	log.WithField("Watch week", weekNum).Debug("Active week.")
 	return weekNum
 }
 
@@ -224,7 +224,7 @@ func weekNum(date string) int {
 func itsHolidayInCountry(holidays []holiday.Holiday, date string, country string) bool {
 	for _, h := range holidays {
 		if h.Date == date && h.Country == country {
-			logging.Debug("Founded holiday on %s in %s: %s", date, country, h.Name)
+			log.WithFields(log.Fields{"Date": date, "Holiday name": h.Name}).Debug("Founded holiday!")
 			return true
 		}
 	}

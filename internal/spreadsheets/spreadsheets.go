@@ -3,14 +3,13 @@ package spreadsheets
 import (
 	"context"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
-	"github.com/skordas/ci-watcher-scheduler/tools/logging"
 
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
@@ -38,12 +37,12 @@ var initiate bool = true
 // with spreadsheets
 func initiateSrv() {
 	if initiate {
-		logging.Info("------ Staring sheets client ------")
+		log.Info("------ Staring sheets client ------")
 		credentialsJson = os.Getenv("CREDENTIALS")
-		logging.Info("Credentials path: %s", credentialsJson)
+		log.WithField("path", credentialsJson).Info("Starting with credentials:")
 
 		spreadsheetId = os.Getenv("SPREADSHEET_ID")
-		logging.Info("Spreadsheet ID: %s", spreadsheetId)
+		log.WithField("SpreadsheetID", spreadsheetId).Info("Working with spreadsheet:")
 
 		ctx := context.Background()
 		credentials, err := ioutil.ReadFile(credentialsJson)
@@ -69,7 +68,7 @@ func initiateSrv() {
 func GetEngineers() map[string]engineer.Engineer {
 	initiateSrv()
 
-	logging.Info("------ Getting list of engineers ------")
+	log.Info("------ Getting list of engineers ------")
 	engineers := make(map[string]engineer.Engineer)
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, engineersRange).Do()
 	if err != nil {
@@ -77,7 +76,7 @@ func GetEngineers() map[string]engineer.Engineer {
 	}
 
 	if len(resp.Values) == 0 {
-		logging.Warning("No data found in range: %s", engineersRange)
+		log.Warnf("No data found in range: %s", engineersRange)
 	} else {
 		for _, row := range resp.Values {
 			e := engineer.New(row[0], row[1], row[2], row[3], row[4], row[5],
@@ -94,7 +93,7 @@ func GetEngineers() map[string]engineer.Engineer {
 func GetHolidays() []holiday.Holiday {
 	initiateSrv()
 
-	logging.Info("------ Getting list of holidays ------")
+	log.Info("------ Getting list of holidays ------")
 	var holidays = []holiday.Holiday{}
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, holidaysRange).Do()
 	if err != nil {
@@ -102,7 +101,7 @@ func GetHolidays() []holiday.Holiday {
 	}
 
 	if len(resp.Values) == 0 {
-		logging.Warning("No data found in range: %s", holidaysRange)
+		log.Warnf("No data found in range: %s", holidaysRange)
 	} else {
 		for _, row := range resp.Values {
 			h := holiday.New(row[0], row[1], row[2])
@@ -116,7 +115,7 @@ func GetHolidays() []holiday.Holiday {
 func GetCurrentSchedule() map[string]schedule.Schedule {
 	initiateSrv()
 
-	logging.Info("------ Getting current schedule ------")
+	log.Info("------ Getting current schedule ------")
 	var scheduleCurrent = make(map[string]schedule.Schedule)
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, scheduleRange).Do()
 	if err != nil {
@@ -124,7 +123,7 @@ func GetCurrentSchedule() map[string]schedule.Schedule {
 	}
 
 	if len(resp.Values) == 0 {
-		logging.Warning("No data found in range :s", scheduleRange)
+		log.Warnf("No data found in range :s", scheduleRange)
 	} else {
 		for _, row := range resp.Values {
 			sch := schedule.New(row[0], row[1], row[2], row[3], row[4], row[5],
@@ -160,7 +159,7 @@ func StoreSchedule(schedule schedule.Schedule) {
 	vr.Values = append(vr.Values, myval)
 	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, insertScheduleRange, &vr).ValueInputOption(inputOption).Do()
 	if err != nil {
-		logging.Error("Unable to store data in sheet. %v", err)
+		log.Fatalf("Unable to store data in sheet. %v", err)
 	}
 }
 
@@ -183,7 +182,7 @@ func insertEmptyRow() {
 
 	_, err := srv.Spreadsheets.BatchUpdate(spreadsheetId, emptyLine).Do()
 	if err != nil {
-		logging.Error("Unable insert empty line. %v", err)
+		log.Fatalf("Unable insert empty line. %v", err)
 	}
-	logging.Debug("Empty line inserted!")
+	log.Debug("Empty line inserted!")
 }

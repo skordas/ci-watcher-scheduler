@@ -11,8 +11,8 @@ import (
 
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
-	"github.com/skordas/ci-watcher-scheduler/tools/logging"
 
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
@@ -35,9 +35,9 @@ var initiate bool = true
 // with carendar
 func initiateSrv() {
 	if initiate {
-		logging.Info("------ Staring calendar client ------")
+		log.Info("------ Staring calendar client ------")
 		credentialsJson = os.Getenv("CREDENTIALS")
-		logging.Info("Credentials path: %s", credentialsJson)
+		log.WithField(log.Fields{"path": credentialsJson}).Info("Starting with credentials:")
 
 		ctx := context.Background()
 		credentials, err := ioutil.ReadFile(credentialsJson)
@@ -76,7 +76,7 @@ func main() {
 	}
 	// TODO Move creating calendar outside
 	if len(scheduleCalendar.Items) == 0 {
-		logging.Info("No calendars. Creating new %s", calendarName)
+		log.Infof("No calendars. Creating new %s", calendarName)
 
 		schCal := &calendar.Calendar{
 			Summary:  calendarName,
@@ -87,7 +87,7 @@ func main() {
 			log.Fatalf("Sorry - can't create a calendar %s, err: %v", calendarName, err)
 		}
 		calId = r.Id
-		logging.Info("New calendar %s created. ID of new calendar: %s", calendarName, calId)
+		log.Infof("New calendar %s created. ID of new calendar: %s", calendarName, calId)
 		// adding owners
 		// TODO - get managers and add them here
 
@@ -101,7 +101,7 @@ func main() {
 
 		srv.Acl.Insert(calId, per)
 		// TODO Verification of that.
-		logging.Info("Added permission")
+		log.Infof("Added permission")
 
 	} else {
 		for _, c := range scheduleCalendar.Items {
@@ -114,8 +114,7 @@ func main() {
 	}
 	// TODO - maybe  here creaet correct calenda. This can happend when there are some calendars, bot non of what we need.
 	if calId == "" {
-		logging.Error("Can't find '%s' calendar!", calendarName)
-		log.Fatalf("Can't find calendar!")
+		log.Fatalf("Can't find '%s' calendar!", calendarName)
 	}
 
 	// Create event
