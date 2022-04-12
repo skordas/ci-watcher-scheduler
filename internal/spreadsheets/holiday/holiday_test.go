@@ -2,6 +2,7 @@ package holiday
 
 import (
 	"testing"
+	"time"
 )
 
 func TestNewHolidayCreateCorrectly(t *testing.T) {
@@ -10,7 +11,7 @@ func TestNewHolidayCreateCorrectly(t *testing.T) {
 	if h.Country != "US" {
 		t.Errorf("Holiday Country should be: %s, but it's: %v", "US", h.Country)
 	}
-	if h.Date != "01/01/2022" {
+	if h.Date != time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC) {
 		t.Errorf("Holiday Date should be: %s, but it's %v", "01/01/2022", h.Date)
 	}
 	if h.Name != "Holiday" {

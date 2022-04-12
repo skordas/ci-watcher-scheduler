@@ -2,6 +2,7 @@ package schedule
 
 import (
 	"testing"
+	"time"
 )
 
 func TestNewCreateCorrectSchedule(t *testing.T) {
@@ -22,7 +23,7 @@ func TestNewCreateCorrectSchedule(t *testing.T) {
 		"L",
 	)
 
-	if sch.Date != "01/01/2022" {
+	if sch.Date != time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC) {
 		t.Errorf("Schedule Date should be: %s, but it's: %v", "01/01/2022", sch.Date)
 	}
 	if sch.Manager != "Men" {

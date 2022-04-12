@@ -1,7 +1,8 @@
 package main
 
 import (
-	"os"
+	// "os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	sa "github.com/skordas/ci-watcher-scheduler/internal/scheduleanalyzer"
@@ -11,15 +12,15 @@ import (
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
 )
 
-var currentSchedule = make(map[string]schedule.Schedule)
+var currentSchedule = make(map[time.Time]schedule.Schedule)
 var engineers = make(map[string]engineer.Engineer)
 var holidays = []holiday.Holiday{}
 
 func main() {
-	dayToSchedule := os.Getenv("DATE")
 	engineers = spreadsheets.GetEngineers()
 	holidays = spreadsheets.GetHolidays()
 	currentSchedule = spreadsheets.GetCurrentSchedule()
+	dayToSchedule := sa.GetDayToSchedule(currentSchedule)
 
 	// Counting activity of engineers
 	sa.CountEngineersActivity(engineers, currentSchedule)
@@ -51,7 +52,7 @@ func main() {
 	sa.AddActivity(engineers, upgry5Watcher)
 
 	// store schedule in spreadsheet
-	scheduleToStore := schedule.New(dayToSchedule, "", e2ey0Watcher, e2ey1Watcher,
+	scheduleToStore := schedule.New(dayToSchedule.Format(schedule.LayoutUS), "", e2ey0Watcher, e2ey1Watcher,
 		e2ey2Watcher, e2ey3Watcher, e2ey4Watcher, e2ey5Watcher, upgry0Watcher,
 		upgry1Watcher, upgry2Watcher, upgry3Watcher, upgry4Watcher, upgry5Watcher)
 

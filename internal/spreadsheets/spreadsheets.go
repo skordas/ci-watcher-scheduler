@@ -4,6 +4,7 @@ import (
 	"context"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
@@ -19,6 +20,7 @@ import (
 // Values saved in spreadsheet cells will be interpreted like entered by user
 // string: 3/14/2022 after insert will be automatically format to dates
 const inputOption string = "USER_ENTERED"
+const layoutUS = "1/2/2006"
 
 var credentialsJson string
 var spreadsheetId string
@@ -72,7 +74,7 @@ func GetEngineers() map[string]engineer.Engineer {
 	engineers := make(map[string]engineer.Engineer)
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, engineersRange).Do()
 	if err != nil {
-		log.Fatal("Unable to retrieve data from sheet: %v", err)
+		log.Fatalf("Unable to retrieve data from sheet: %v", err)
 	}
 
 	if len(resp.Values) == 0 {
@@ -97,7 +99,7 @@ func GetHolidays() []holiday.Holiday {
 	var holidays = []holiday.Holiday{}
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, holidaysRange).Do()
 	if err != nil {
-		log.Fatal("Unable to retrive data from sheet: %v", err)
+		log.Fatalf("Unable to retrive data from sheet: %v", err)
 	}
 
 	if len(resp.Values) == 0 {
@@ -112,18 +114,18 @@ func GetHolidays() []holiday.Holiday {
 }
 
 // Get current schedule from spreadsheet
-func GetCurrentSchedule() map[string]schedule.Schedule {
+func GetCurrentSchedule() map[time.Time]schedule.Schedule {
 	initiateSrv()
 
 	log.Info("------ Getting current schedule ------")
-	var scheduleCurrent = make(map[string]schedule.Schedule)
+	var scheduleCurrent = make(map[time.Time]schedule.Schedule)
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, scheduleRange).Do()
 	if err != nil {
-		log.Fatal("Unable to retrive data from sheet: %v", err)
+		log.Fatalf("Unable to retrive data from sheet: %v", err)
 	}
 
 	if len(resp.Values) == 0 {
-		log.Warnf("No data found in range :s", scheduleRange)
+		log.Warnf("No data found in range %s", scheduleRange)
 	} else {
 		for _, row := range resp.Values {
 			sch := schedule.New(row[0], row[1], row[2], row[3], row[4], row[5],
@@ -141,7 +143,7 @@ func StoreSchedule(schedule schedule.Schedule) {
 
 	var vr sheets.ValueRange
 	myval := []interface{}{
-		schedule.Date,
+		schedule.Date.Format(layoutUS),
 		schedule.Manager,
 		schedule.E2eWatcherY0,
 		schedule.E2eWatcherY1,
