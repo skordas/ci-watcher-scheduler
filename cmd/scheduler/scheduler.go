@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "os"
+	"os"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -15,6 +15,12 @@ import (
 var currentSchedule = make(map[time.Time]schedule.Schedule)
 var engineers = make(map[string]engineer.Engineer)
 var holidays = []holiday.Holiday{}
+
+func init() {
+	if os.Getenv("DEBUG") == "true" {
+		log.SetLevel(log.DebugLevel)
+	}
+}
 
 func main() {
 	engineers = spreadsheets.GetEngineers()
