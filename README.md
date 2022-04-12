@@ -6,14 +6,24 @@
 - [Enable Google Workspace APIs](https://developers.google.com/workspace/guides/enable-apis)
 - [Create access credentials. Service account](https://developers.google.com/workspace/guides/create-credentials#service-account)
 
-Export variables
+Export variables:
 
 ```bash
 export SPREADSHEET_ID=your_google_docs_spreadsheet_id
 export CREDENTIALS=/path/to/your/credentials.json
 export DEBUG=true/false # true will add additional debug informations in logs
-export CI=true/false # true will turn off colors from logs
-export DATE='3/9/2022' # Temportary way of getting day to schedule (format: M/D/YYYY)
+```
+
+Run scheduler to create a new schedule for next available day.
+
+```bash
+go run cmd/scheduler/scheduler.go
+```
+
+To run unit test with coverage:
+
+```bash
+go test ./... -coverprofile=/tmp/cov.out && go tool cover -html=/tmp/cov.out
 ```
 
 ## TODO (random order)
@@ -23,8 +33,3 @@ export DATE='3/9/2022' # Temportary way of getting day to schedule (format: M/D/
 - adding buddy for New To CI Watcher
 - getting parameters (like date) from command line
 - Adding comments about holidays and PTO in spreadsheet
-
-## Need to decide
-- Default trigger? - Jenkins or by user?
-- Range of date? - one date at once and if needed loop in jenkins, or everything managed by scheduler?
-- Holidays - Take from spreadsheet or from calendar?

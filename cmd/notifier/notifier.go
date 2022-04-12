@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
 
 	"os"
-	// "time"
+	"time"
 
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
@@ -25,7 +24,7 @@ var calendarName string = "CI-Watchers Schedule"
 var timeZone string = "America/New_York"
 var calId string
 
-var currentSchedule = make(map[string]schedule.Schedule)
+var currentSchedule = make(map[time.Time]schedule.Schedule)
 
 var credentialsJson string
 var srv *calendar.Service
@@ -37,7 +36,7 @@ func initiateSrv() {
 	if initiate {
 		log.Info("------ Staring calendar client ------")
 		credentialsJson = os.Getenv("CREDENTIALS")
-		log.WithField(log.Fields{"path": credentialsJson}).Info("Starting with credentials:")
+		log.WithField("path", credentialsJson).Info("Starting with credentials:")
 
 		ctx := context.Background()
 		credentials, err := ioutil.ReadFile(credentialsJson)
@@ -107,7 +106,7 @@ func main() {
 		for _, c := range scheduleCalendar.Items {
 			if c.Summary == calendarName {
 				calId = c.Id
-				logging.Info("'%s' calendar founded. Calendar ID: %s", calendarName, calId)
+				log.Infof("'%s' calendar founded. Calendar ID: %s", calendarName, calId)
 				break
 			}
 		}

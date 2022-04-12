@@ -3,6 +3,7 @@ package scheduleanalyzer
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/engineer"
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/holiday"
@@ -55,7 +56,7 @@ func TestCountEngineersActivityWithEmptySchedule(t *testing.T) {
 
 	// Given
 	eng := loadEngineers()
-	sch := make(map[string]schedule.Schedule)
+	sch := make(map[time.Time]schedule.Schedule)
 	ea := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"}
 
 	// When
@@ -76,7 +77,7 @@ func TestGetWatcherForRemovingManagersFromList(t *testing.T) {
 
 	// Given
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.Manager = true
@@ -107,7 +108,7 @@ func TestGetWatcherForRemovingNewToCiFromList(t *testing.T) {
 
 	// Given
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.NewToCi = true
@@ -138,7 +139,7 @@ func TestGetWatcherForRemovingEngineerForOddWeek(t *testing.T) {
 
 	// Given
 	eng := loadEngineers()
-	date := "2/9/2022" // even week (6th)
+	date := time.Date(2022, time.February, 9, 0, 0, 0, 0, time.UTC) // even week (6th)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.Week = 2
@@ -159,7 +160,7 @@ func TestGetWatcherForRemovingEngineerForEvenWeek(t *testing.T) {
 
 	// Given
 	eng := loadEngineers()
-	date := "2/2/2022" // odd week (5th)
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC) // odd week (5th)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.Week = 2
@@ -190,7 +191,7 @@ func TestGetWatcherForRemovingEngineerWithHolidays(t *testing.T) {
 
 	// Given
 	eng := loadEngineers()
-	date := "2/2/2022" // odd week (5th)
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC) // odd week (5th)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.Country = "UK"
@@ -222,7 +223,7 @@ func TestGetWatcherForE2ey0WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "e2ey0"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY0 = true
@@ -244,7 +245,7 @@ func TestGetWatcherForE2ey1WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "e2ey1"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY1 = true
@@ -266,7 +267,7 @@ func TestGetWatcherForE2ey2WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "e2ey2"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY2 = true
@@ -288,7 +289,7 @@ func TestGetWatcherForE2ey3WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "e2ey3"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY3 = true
@@ -310,7 +311,7 @@ func TestGetWatcherForE2ey4WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "e2ey4"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY4 = true
@@ -332,7 +333,7 @@ func TestGetWatcherForE2ey5WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "e2ey5"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY5 = true
@@ -354,7 +355,7 @@ func TestGetWatcherForUpgry0WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "upgry0"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.UpgrY0 = true
@@ -376,7 +377,7 @@ func TestGetWatcherForUpgry1WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "upgry1"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.UpgrY1 = true
@@ -398,7 +399,7 @@ func TestGetWatcherForUpgry2WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "upgry2"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.UpgrY2 = true
@@ -420,7 +421,7 @@ func TestGetWatcherForUpgry3WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "upgry3"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.UpgrY3 = true
@@ -442,7 +443,7 @@ func TestGetWatcherForUpgry4WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "upgry4"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.UpgrY4 = true
@@ -464,7 +465,7 @@ func TestGetWatcherForUpgry5WillBeSelected(t *testing.T) {
 	// Given
 	watchType := "upgry5"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.UpgrY5 = true
@@ -486,7 +487,7 @@ func TestGetWatcherForOneWithPickEngineerWithTheLowestActivity(t *testing.T) {
 	// Given
 	watchType := "e2ey0"
 	eng := loadEngineers()
-	date := "2/2/2022"
+	date := time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC)
 	hol := loadHolidays()
 	e := eng["A"]
 	e.E2eY0 = true
@@ -522,6 +523,20 @@ func TestGetWatcherForOneWithPickEngineerWithTheLowestActivity(t *testing.T) {
 	// Then
 	if result != correct {
 		t.Errorf("Expected engineer %s with the lowest activity, but got %s", correct, result)
+	}
+}
+
+func TestGetDayToSchedule(t *testing.T) {
+	// Given
+	sch := loadSchedule()
+
+	// When
+	result := GetDayToSchedule(sch)
+	correct := time.Date(2022, time.January, 7, 0, 0, 0, 0, time.UTC)
+
+	// Then
+	if result != correct {
+		t.Errorf("Expected date %v, but got %v", correct, result)
 	}
 }
 
@@ -593,40 +608,40 @@ func loadEngineers() map[string]engineer.Engineer {
 
 // loadSchedule will return map with sample schedule - loaded with names of
 // engineers used in loadEngineers func.
-func loadSchedule() map[string]schedule.Schedule {
-	var sm = make(map[string]schedule.Schedule)
+func loadSchedule() map[time.Time]schedule.Schedule {
+	var sm = make(map[time.Time]schedule.Schedule)
 	s := schedule.Schedule{
-		"1/1/2022", // Date
-		"",         // Manager
-		"A",        // E2eWatcherY0
-		"B",        // E2eWatcherY1
-		"C",        // E2eWatcherY2
-		"D",        // E2eWatcherY3
-		"E",        // E2eWatcherY4
-		"F",        // E2eWatcherY5
-		"G",        // UpgrWatcherY0
-		"H",        // UpgrWatcherY1
-		"I",        // UpgrWatcherY2
-		"J",        // UpgrWatcherY3
-		"K",        // UpgrWatcherY4
-		"L",        // UpgrWatcherY5
+		time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC), // Date
+		"",  // Manager
+		"A", // E2eWatcherY0
+		"B", // E2eWatcherY1
+		"C", // E2eWatcherY2
+		"D", // E2eWatcherY3
+		"E", // E2eWatcherY4
+		"F", // E2eWatcherY5
+		"G", // UpgrWatcherY0
+		"H", // UpgrWatcherY1
+		"I", // UpgrWatcherY2
+		"J", // UpgrWatcherY3
+		"K", // UpgrWatcherY4
+		"L", // UpgrWatcherY5
 	}
-	sm["1/1/2022"] = s
+	sm[time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)] = s
 
-	s.Date = "1/2/2022"
-	sm["1/2/2022"] = s
+	s.Date = time.Date(2022, time.January, 2, 0, 0, 0, 0, time.UTC)
+	sm[time.Date(2022, time.January, 2, 0, 0, 0, 0, time.UTC)] = s
 
-	s.Date = "1/3/2022"
-	sm["1/3/2022"] = s
+	s.Date = time.Date(2022, time.January, 3, 0, 0, 0, 0, time.UTC)
+	sm[time.Date(2022, time.January, 3, 0, 0, 0, 0, time.UTC)] = s
 
-	s.Date = "1/4/2022"
-	sm["1/4/2022"] = s
+	s.Date = time.Date(2022, time.January, 4, 0, 0, 0, 0, time.UTC)
+	sm[time.Date(2022, time.January, 4, 0, 0, 0, 0, time.UTC)] = s
 
-	s.Date = "1/5/2022"
-	sm["1/5/2022"] = s
+	s.Date = time.Date(2022, time.January, 5, 0, 0, 0, 0, time.UTC)
+	sm[time.Date(2022, time.January, 5, 0, 0, 0, 0, time.UTC)] = s
 
-	s.Date = "1/6/2022"
-	sm["1/7/2022"] = s
+	s.Date = time.Date(2022, time.January, 6, 0, 0, 0, 0, time.UTC)
+	sm[time.Date(2022, time.January, 7, 0, 0, 0, 0, time.UTC)] = s
 
 	return sm
 }
@@ -635,9 +650,9 @@ func loadSchedule() map[string]schedule.Schedule {
 func loadHolidays() []holiday.Holiday {
 	var ha = []holiday.Holiday{}
 	h := holiday.Holiday{
-		"UK",       //Country
-		"2/2/2022", // Date
-		"Holiday",  // Name
+		"UK", //Country
+		time.Date(2022, time.February, 2, 0, 0, 0, 0, time.UTC), // Date
+		"Holiday", // Name
 	}
 	ha = append(ha, h)
 	return ha

@@ -1,24 +1,28 @@
 package schedule
 
 import (
+	"time"
+
 	log "github.com/sirupsen/logrus"
 )
 
+const LayoutUS = "1/2/2006"
+
 type Schedule struct {
-	Date          string //  0 - Scheduled day
-	Manager       string //  1 - ID of manager for week
-	E2eWatcherY0  string //  2 - E2E CI-Watcher for v. 4.y
-	E2eWatcherY1  string //  3 - E2E CI-Watcher for v. 4.y-1
-	E2eWatcherY2  string //  4 - E2E CI-Watcher for v. 4.y-2
-	E2eWatcherY3  string //  5 - E2E CI-Watcher for v. 4.y-3
-	E2eWatcherY4  string //  6 - E2E CI-Watcher for v. 4.y-4
-	E2eWatcherY5  string //  7 - E2E CI-Watcher for v. 4.y-5
-	UpgrWatcherY0 string //  8 - Upgrade CI-Watcher for v. 4.y
-	UpgrWatcherY1 string //  9 - Upgrade CI-Watcher for v. 4.y-1
-	UpgrWatcherY2 string // 10 - Upgrade CI-Watcher for v. 4.y-2
-	UpgrWatcherY3 string // 11 - Upgrade CI-Watcher for v. 4.y-3
-	UpgrWatcherY4 string // 12 - Upgrade CI-Watcher for v. 4.y-4
-	UpgrWatcherY5 string // 13 - Upgrade CI-Watcher for v. 4.y-5
+	Date          time.Time //  0 - Scheduled day
+	Manager       string    //  1 - ID of manager for week
+	E2eWatcherY0  string    //  2 - E2E CI-Watcher for v. 4.y
+	E2eWatcherY1  string    //  3 - E2E CI-Watcher for v. 4.y-1
+	E2eWatcherY2  string    //  4 - E2E CI-Watcher for v. 4.y-2
+	E2eWatcherY3  string    //  5 - E2E CI-Watcher for v. 4.y-3
+	E2eWatcherY4  string    //  6 - E2E CI-Watcher for v. 4.y-4
+	E2eWatcherY5  string    //  7 - E2E CI-Watcher for v. 4.y-5
+	UpgrWatcherY0 string    //  8 - Upgrade CI-Watcher for v. 4.y
+	UpgrWatcherY1 string    //  9 - Upgrade CI-Watcher for v. 4.y-1
+	UpgrWatcherY2 string    // 10 - Upgrade CI-Watcher for v. 4.y-2
+	UpgrWatcherY3 string    // 11 - Upgrade CI-Watcher for v. 4.y-3
+	UpgrWatcherY4 string    // 12 - Upgrade CI-Watcher for v. 4.y-4
+	UpgrWatcherY5 string    // 13 - Upgrade CI-Watcher for v. 4.y-5
 }
 
 func New(date interface{}, manager interface{}, e2eWatcherY0 interface{},
@@ -30,7 +34,7 @@ func New(date interface{}, manager interface{}, e2eWatcherY0 interface{},
 	upgradeWatcherY5 interface{}) Schedule {
 
 	sch := Schedule{
-		date.(string),
+		parseDate(date.(string)),
 		manager.(string),
 		e2eWatcherY0.(string),
 		e2eWatcherY1.(string),
@@ -64,4 +68,12 @@ func New(date interface{}, manager interface{}, e2eWatcherY0 interface{},
 	}).Debug("Creating a new schedule")
 
 	return sch
+}
+
+func parseDate(dateAsString string) time.Time {
+	day, err := time.Parse(LayoutUS, dateAsString)
+	if err != nil {
+		log.WithFields(log.Fields{"Layout": LayoutUS, "Date To Parse": dateAsString}).Fatal("Can't parse date!")
+	}
+	return day
 }

@@ -9,8 +9,6 @@ import (
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
 )
 
-const layoutUS = "1/2/2006"
-
 // Adding one ponint to engineer activity for each assigned activity in
 // CI watcher schedule.
 func AddActivity(engineersMap map[string]engineer.Engineer, key string) {
@@ -25,7 +23,7 @@ func AddActivity(engineersMap map[string]engineer.Engineer, key string) {
 // ex. last 3 months.
 // Checking current schedule for active engineers and add activity points in
 // engeeners map.
-func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSchedule map[string]schedule.Schedule) {
+func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSchedule map[time.Time]schedule.Schedule) {
 	if len(currentSchedule) == 0 {
 		log.Info("No history of engineers activity!")
 	} else {
@@ -60,7 +58,7 @@ func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSched
 // upgry3 - e2e watcher for latest - 3 release
 // upgry4 - e2e watcher for latest - 4 release
 // upgry5 - e2e watcher for latest - 5 release
-func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Engineer, date string, holidays []holiday.Holiday) string {
+func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Engineer, date time.Time, holidays []holiday.Holiday) string {
 	// coping map
 	watchers := make(map[string]engineer.Engineer)
 	for id, properties := range engineers {
@@ -205,9 +203,8 @@ func GetWatcherFor(assignedVersion string, engineers map[string]engineer.Enginee
 	return theChosenOne
 }
 
-func weekNum(date string) int {
-	day, _ := time.Parse(layoutUS, date)
-	_, weekNow := day.ISOWeek()
+func weekNum(date time.Time) int {
+	_, weekNow := date.ISOWeek()
 	log.WithField("WeekNo", weekNow).Debug("Week of the year")
 	mod := weekNow % 2
 	var weekNum int
@@ -221,7 +218,7 @@ func weekNum(date string) int {
 }
 
 // Return true if on given day and country it's a holiday
-func itsHolidayInCountry(holidays []holiday.Holiday, date string, country string) bool {
+func itsHolidayInCountry(holidays []holiday.Holiday, date time.Time, country string) bool {
 	for _, h := range holidays {
 		if h.Date == date && h.Country == country {
 			log.WithFields(log.Fields{"Date": date, "Holiday name": h.Name}).Debug("Founded holiday!")
@@ -229,4 +226,14 @@ func itsHolidayInCountry(holidays []holiday.Holiday, date string, country string
 		}
 	}
 	return false
+}
+
+func GetDayToSchedule(schedule map[time.Time]schedule.Schedule) time.Time {
+	dayToSchedule := time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)
+	for _, day := range schedule {
+		if day.Date.After(dayToSchedule) {
+			dayToSchedule = day.Date
+		}
+	}
+	return dayToSchedule.Add(24 * time.Hour)
 }
