@@ -1,6 +1,8 @@
 package scheduleanalyzer
 
 import (
+	"os"
+	"strconv"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -9,11 +11,27 @@ import (
 	"github.com/skordas/ci-watcher-scheduler/internal/spreadsheets/schedule"
 )
 
+var e2eY0WatcherWeight, _ = strconv.Atoi(os.Getenv("E2E_WATCHER_Y0_WEIGHT"))
+var e2eY1WatcherWeight, _ = strconv.Atoi(os.Getenv("E2E_WATCHER_Y1_WEIGHT"))
+var e2eY2WatcherWeight, _ = strconv.Atoi(os.Getenv("E2E_WATCHER_Y2_WEIGHT"))
+var e2eY3WatcherWeight, _ = strconv.Atoi(os.Getenv("E2E_WATCHER_Y3_WEIGHT"))
+var e2eY4WatcherWeight, _ = strconv.Atoi(os.Getenv("E2E_WATCHER_Y4_WEIGHT"))
+var e2eY5WatcherWeight, _ = strconv.Atoi(os.Getenv("E2E_WATCHER_Y5_WEIGHT"))
+var upgrY0WatcherWeight, _ = strconv.Atoi(os.Getenv("UPGR_WATCHER_Y0_WEIGHT"))
+var upgrY1WatcherWeight, _ = strconv.Atoi(os.Getenv("UPGR_WATCHER_Y1_WEIGHT"))
+var upgrY2WatcherWeight, _ = strconv.Atoi(os.Getenv("UPGR_WATCHER_Y2_WEIGHT"))
+var upgrY3WatcherWeight, _ = strconv.Atoi(os.Getenv("UPGR_WATCHER_Y3_WEIGHT"))
+var upgrY4WatcherWeight, _ = strconv.Atoi(os.Getenv("UPGR_WATCHER_Y4_WEIGHT"))
+var upgrY5WatcherWeight, _ = strconv.Atoi(os.Getenv("UPGR_WATCHER_Y5_WEIGHT"))
+
 // Adding one ponint to engineer activity for each assigned activity in
 // CI watcher schedule.
-func AddActivity(engineersMap map[string]engineer.Engineer, key string) {
+func AddActivity(engineersMap map[string]engineer.Engineer, key string, weight int) {
 	if eng, ok := engineersMap[key]; ok {
-		eng.Activity++
+		log.WithField("Activity before", eng.Activity).Debug(eng.Kerberos)
+		log.WithField("Adding weight", weight).Debug(eng.Kerberos)
+		eng.Activity = eng.Activity + weight
+		log.WithField("Activity after", eng.Activity).Debug(eng.Kerberos)
 		engineersMap[key] = eng
 		log.WithFields(log.Fields{"engineer": key, "Activity": eng.Activity}).Debug("Adding new activity")
 	}
@@ -29,18 +47,18 @@ func CountEngineersActivity(engineers map[string]engineer.Engineer, currentSched
 	} else {
 		for day, scheduleForDay := range currentSchedule {
 			log.WithFields(log.Fields{"Date": day}).Info("Checking activity of ongineers")
-			AddActivity(engineers, scheduleForDay.E2eWatcherY0)
-			AddActivity(engineers, scheduleForDay.E2eWatcherY1)
-			AddActivity(engineers, scheduleForDay.E2eWatcherY2)
-			AddActivity(engineers, scheduleForDay.E2eWatcherY3)
-			AddActivity(engineers, scheduleForDay.E2eWatcherY4)
-			AddActivity(engineers, scheduleForDay.E2eWatcherY5)
-			AddActivity(engineers, scheduleForDay.UpgrWatcherY0)
-			AddActivity(engineers, scheduleForDay.UpgrWatcherY1)
-			AddActivity(engineers, scheduleForDay.UpgrWatcherY2)
-			AddActivity(engineers, scheduleForDay.UpgrWatcherY3)
-			AddActivity(engineers, scheduleForDay.UpgrWatcherY4)
-			AddActivity(engineers, scheduleForDay.UpgrWatcherY5)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY0, e2eY0WatcherWeight)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY1, e2eY1WatcherWeight)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY2, e2eY2WatcherWeight)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY3, e2eY3WatcherWeight)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY4, e2eY4WatcherWeight)
+			AddActivity(engineers, scheduleForDay.E2eWatcherY5, e2eY5WatcherWeight)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY0, upgrY0WatcherWeight)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY1, upgrY1WatcherWeight)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY2, upgrY2WatcherWeight)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY3, upgrY3WatcherWeight)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY4, upgrY4WatcherWeight)
+			AddActivity(engineers, scheduleForDay.UpgrWatcherY5, upgrY5WatcherWeight)
 		}
 	}
 }

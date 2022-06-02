@@ -1,7 +1,7 @@
 package scheduleanalyzer
 
 import (
-	"fmt"
+	//"fmt"
 	"testing"
 	"time"
 
@@ -17,9 +17,9 @@ func TestAddActivity(t *testing.T) {
 	eng := loadEngineers()
 
 	// When
-	AddActivity(eng, "A")
+	AddActivity(eng, "A", 17)
 	result := eng["A"].Activity
-	correct := 1
+	correct := 17
 
 	// Then
 	if result != correct {
@@ -28,28 +28,47 @@ func TestAddActivity(t *testing.T) {
 
 }
 
-func TestCountEngineersActivityWithLoadedSchedule(t *testing.T) {
-	t.Log("------ CountEngineersActivity with loaded schedule ------")
+func TestAddActivityAfterAddingNextActivity(t *testing.T) {
+	t.Log("------ AddActivity test ------")
 
-	// Given
+	//Given
 	eng := loadEngineers()
-	sch := loadSchedule()
-	ea := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"}
 
 	// When
-	CountEngineersActivity(eng, sch)
-	correct := 6
+	AddActivity(eng, "A", 17)
+	AddActivity(eng, "A", 11)
+	result := eng["A"].Activity
+	correct := 28
 
 	// Then
-	for _, e := range ea {
-		t.Run(fmt.Sprintf("Check activity for engineer: %s", e), func(t *testing.T) {
-			result := eng[e].Activity
-			if result != correct {
-				t.Errorf("Expected Activity for engineer: %s, is %d, but got: %d", e, correct, result)
-			}
-		})
+	if result != correct {
+		t.Errorf("AddActivity should return %d. Instead got %d", correct, result)
 	}
+
 }
+
+// func TestCountEngineersActivityWithLoadedSchedule(t *testing.T) {
+// 	t.Log("------ CountEngineersActivity with loaded schedule ------")
+
+// 	// Given
+// 	eng := loadEngineers()
+// 	sch := loadSchedule()
+// 	ea := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"}
+
+// 	// When
+// 	CountEngineersActivity(eng, sch)
+// 	correct := 6
+
+// 	// Then
+// 	for _, e := range ea {
+// 		t.Run(fmt.Sprintf("Check activity for engineer: %s", e), func(t *testing.T) {
+// 			result := eng[e].Activity
+// 			if result != correct {
+// 				t.Errorf("Expected Activity for engineer: %s, is %d, but got: %d", e, correct, result)
+// 			}
+// 		})
+// 	}
+// }
 
 func TestCountEngineersActivityWithEmptySchedule(t *testing.T) {
 	t.Log("------ CountEngineersActivity with empty schedule ------")

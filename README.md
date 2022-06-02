@@ -12,6 +12,19 @@ Export variables:
 export SPREADSHEET_ID=your_google_docs_spreadsheet_id
 export CREDENTIALS=/path/to/your/credentials.json
 export DEBUG=true/false # true will add additional debug informations in logs
+export E2E_WATCHER_Y0_WEIGHT=17
+export E2E_WATCHER_Y1_WEIGHT=16
+export E2E_WATCHER_Y2_WEIGHT=10
+export E2E_WATCHER_Y3_WEIGHT=8
+export E2E_WATCHER_Y4_WEIGHT=3
+export E2E_WATCHER_Y5_WEIGHT=2
+export UPGR_WATCHER_Y0_WEIGHT=17
+export UPGR_WATCHER_Y1_WEIGHT=16
+export UPGR_WATCHER_Y2_WEIGHT=10
+export UPGR_WATCHER_Y3_WEIGHT=8
+export UPGR_WATCHER_Y4_WEIGHT=3
+export UPGR_WATCHER_Y5_WEIGHT=2
+
 ```
 
 Run scheduler to create a new schedule for next available day.
