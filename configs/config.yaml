@@ -1,0 +1,10 @@
+spreadsheet:
+  id: "1Za68tWwVMVAqetr7GcvCddVEdkNhEP1jOyrbARnIJAk"
+  ranges:
+    engineers: "Engineers!A2:U"
+    holidays: "Holidays!A2:C"
+    schedule: "CI_Watch_Schedule!A2:N"
+    scheduleinsert: "CI_Watch_Schedule!A1:N1"
+credentials:
+  path: "/home/skordas/code/go/src/github.com/skordas/ci-watcher-scheduler/service_account_credentials.json"
+debug: true
